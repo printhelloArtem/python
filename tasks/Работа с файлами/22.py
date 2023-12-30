@@ -1,50 +1,33 @@
-def input_name():
-    return input('Введите имя: ')
-
-def input_surname():
-    return input('Введите фамилию: ')
-
-def input_patronymic():
-    return input('Введите отчество: ')
-
-def input_phone():
-    return input('Введите номер телефона: ')
-
-def input_address():
-    return input('Введите адрес: ')
+def input_contact_info(prompt):
+    return input(f'Введите {prompt}: ')
 
 def create_contact():
-    name = input_name()
-    surname = input_surname()
-    patronymic = input_patronymic()
-    phone = input_phone()
-    address = input_address()
+    name = input_contact_info('имя')
+    surname = input_contact_info('фамилию')
+    patronymic = input_contact_info('отчество')
+    phone = input_contact_info('номер телефона')
+    address = input_contact_info('адрес')
 
-    return f'{name} {surname} {patronymic} {phone} {address}'
+    return f'{name} {surname} {patronymic} {phone}\n {address}\n\n'
 
 def add_contact():
     contact = create_contact()
     with open('phonebook.txt', 'a', encoding='UTF-8') as file:
         file.write(contact)
 
-   
-
 def show_info():
     with open('phonebook.txt', 'r', encoding='UTF-8') as file:
         print(file.read().rstrip())
 
 def search_contact():
-    search = input('Введите данные для поиска: ')
+    search = input('Введите данные для поиска: ').lower()
     with open('phonebook.txt', 'r', encoding='UTF-8') as file:
-        contacts_list = file.read().split('\n\n')
-
-    for contact_str in contacts_list:
-        contact_lst = contact_str.split()
-        if any(search.lower() in field.lower() for field in contact_lst):
-            print(contact_str)
+        for contact_str in file:
+            if search in contact_str.lower():
+                print(contact_str.rstrip())
 
 def import_contacts():
-    filename = input('Введите имя файла для импорта: ')
+    filename = input_contact_info('имя файла для импорта')
     try:
         with open(filename, 'r', encoding='UTF-8') as file:
             data = file.read()
@@ -55,7 +38,7 @@ def import_contacts():
         print(f'Файл {filename} не найден.')
 
 def export_contacts():
-    filename = input('Введите имя файла для экспорта: ')
+    filename = input_contact_info('имя файла для экспорта')
     with open('phonebook.txt', 'r', encoding='UTF-8') as phonebook_file:
         data = phonebook_file.read()
         with open(filename, 'w', encoding='UTF-8') as file:
@@ -64,16 +47,16 @@ def export_contacts():
 
 def copy_contact():
     try:
-        source_filename = input('Введите имя файла, откуда скопировать контакт: ')
+        source_filename = input_contact_info('имя файла, откуда скопировать контакт')
         line_number = int(input('Введите номер строки для копирования: '))
 
         with open(source_filename, 'r', encoding='UTF-8') as source_file:
             lines = source_file.readlines()
 
             if 1 <= line_number <= len(lines):
-                contact_to_copy = ''.join(lines[line_number - 1:line_number + 1])
+                contact_to_copy = ''.join(lines[line_number - 1:line_number + 2])
 
-                target_filename = input('Введите имя файла, куда скопировать контакт: ')
+                target_filename = input_contact_info('имя файла, куда скопировать контакт')
 
                 with open(target_filename, 'a', encoding='UTF-8') as target_file:
                     target_file.write(contact_to_copy)
@@ -86,7 +69,6 @@ def copy_contact():
         print('Ошибка: Введите корректный номер строки (целое число).')
     except FileNotFoundError:
         print('Ошибка: Файл не найден.')
-
 
 def interface():
     command = '-1'
